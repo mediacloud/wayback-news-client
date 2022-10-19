@@ -11,6 +11,7 @@ class SearchApiClient:
 
     API_BASE_URL = "http://colsearch.sawood-dev.us.archive.org:8000/{}/".format(VERSION)
 
+    # constants used when requesting top terms
     TERM_FIELD_TITLE = "title"
     TERM_FIELD_SNIPPET = "snippet"
     TERM_AGGREGATION_TOP = "top"
@@ -62,6 +63,7 @@ class SearchApiClient:
             return {}
         data = results['dailycounts']
         to_return = []
+        # transform to list of dicts for easier use
         for day_date, day_value in data.items():  # date is in 'YYYY-MM-DD' format
             day = ciso8601.parse_datetime(day_date)
             to_return.append({
