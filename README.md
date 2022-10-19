@@ -60,4 +60,4 @@ Distribution
 Version History
 ---------------
 
-TBD
+* __v0.1.0__ - initial test-only release
