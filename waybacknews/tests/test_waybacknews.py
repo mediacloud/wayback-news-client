@@ -1,6 +1,7 @@
 from unittest import TestCase
 import datetime as dt
 import ciso8601
+import requests
 
 from waybacknews.searchapi import SearchApiClient
 
@@ -77,15 +78,13 @@ class TestMediaCloudCollection(TestCase):
             assert len(r['title']) > 0
             assert 'publication_date' in r
 
-    """
     def test_article(self):
-        STORY_ID = "Y29tLGV0dXJib25ld3Msc3EpLzU2Nzc5Mi90aGUtbGlnaHQtYXQtdGhlLWVuZC1vZi10aGUtY292aWQtMTktdHVubmVs"
+        STORY_ID = "8b6ea5cacda7fa0741ada306615b50e4"
         story = self._api.article(STORY_ID)
         assert len(story['title']) > 0
-        assert story['language'] == 'sq'
-        assert story['domain'] == 'eturbonews.com'
+        assert story['language'] == 'ca'
+        assert story['domain'] == 'diariandorra.ad'
         assert len(story['snippet']) > 0
-    """
 
     def test_all_articles(self):
         query = "trump"
@@ -135,3 +134,17 @@ class TestMediaCloudCollection(TestCase):
         for term, count in results.items():
             assert last_count >= count
             last_count = count
+
+    def test_content_via_article_url(self):
+        # make sure we can fetch the full content for articles - in the poorly named `snippet` field
+        query = "trump"
+        start_date = dt.datetime(2022, 3, 4)
+        end_date = dt.datetime(2022, 3, 4)
+        for page in self._api.all_articles(query, start_date, end_date):
+            for article in page[:5]:
+                article_info = requests.get(article['article_url']).json()
+                assert 'snippet' in article_info
+                assert len(article_info['snippet']) > 0
+            break
+
+

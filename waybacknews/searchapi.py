@@ -81,6 +81,7 @@ class SearchApiClient:
         return results
 
     def article(self, article_id: str) -> Dict:
+        # you can extract article_ids from the `article_url` property
         results, _ = self._query("{}/article/{}".format(self._collection, article_id), method='GET')
         return results
 
