@@ -30,7 +30,7 @@ setup(name='wayback-news-search',
       package_data={'': ['LICENSE']},
       python_requires='>3.7',
       install_requires=REQUIRED_PACKAGES,
-      tests_require=['parameterized'],
+      extras_require={'dev': ['pytest', 'twine']},
       project_urls={
               'Bug Reports': 'https://github.com/mediacloud/wayback-news-search/issues',
               'Source': 'https://github.com/mediacloud/wayback-news-search',
