@@ -19,6 +19,7 @@ class SearchApiClient:
 
     def __init__(self, collection):
         self._collection = collection
+        self._session = requests.Session()  # better performance to put all HTTP through this one object
         self._logger = logging.getLogger(__name__)
 
     def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
@@ -112,9 +113,9 @@ class SearchApiClient:
         """
         endpoint_url = self.API_BASE_URL+endpoint
         if method == 'GET':
-            r = requests.get(endpoint_url, params)
+            r = self._session.get(endpoint_url, params=params)
         elif method == 'POST':
-            r = requests.post(endpoint_url, json=params)
+            r = self._session.post(endpoint_url, json=params)
         else:
             raise RuntimeError("Unsupported method of '{}'".format(method))
         return r.json(), r
