@@ -80,11 +80,11 @@ class SearchApiClient:
         results, response = self._query("{}/search/overview".format(self._collection), params, method='POST')
         return results
 
-    def item(self, item_id: str) -> Dict:
-        results, _ = self._query("{}/article/{}".format(self._collection, item_id), method='GET')
+    def article(self, article_id: str) -> Dict:
+        results, _ = self._query("{}/article/{}".format(self._collection, article_id), method='GET')
         return results
 
-    def all_items(self, query: str, start_date: dt.datetime, end_date: dt.datetime, page_size: int = 1000,  **kwargs):
+    def all_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime, page_size: int = 1000, **kwargs):
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
         params.update(kwargs)
         more_pages = True

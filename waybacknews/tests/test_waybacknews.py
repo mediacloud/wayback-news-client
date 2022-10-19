@@ -78,16 +78,16 @@ class TestMediaCloudCollection(TestCase):
             assert 'publication_date' in r
 
     """
-    def test_item(self):
+    def test_article(self):
         STORY_ID = "Y29tLGV0dXJib25ld3Msc3EpLzU2Nzc5Mi90aGUtbGlnaHQtYXQtdGhlLWVuZC1vZi10aGUtY292aWQtMTktdHVubmVs"
-        story = self._api.item(STORY_ID)
+        story = self._api.article(STORY_ID)
         assert len(story['title']) > 0
         assert story['language'] == 'sq'
         assert story['domain'] == 'eturbonews.com'
         assert len(story['snippet']) > 0
     """
 
-    def test_all_items(self):
+    def test_all_articles(self):
         query = "trump"
         start_date = dt.datetime(2022, 3, 4)
         end_date = dt.datetime(2022, 3, 4)
@@ -97,7 +97,7 @@ class TestMediaCloudCollection(TestCase):
         assert story_count < 5000
         # now text it
         found_story_count = 0
-        for page in self._api.all_items(query, start_date, end_date):
+        for page in self._api.all_articles(query, start_date, end_date):
             assert len(page) > 0
             found_story_count += len(page)
         assert found_story_count == story_count

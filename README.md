@@ -32,7 +32,7 @@ from waybacknews.searchapi import SearchApiClient
 import datetime as dt
 
 api = SearchApiClient("mediacloud")
-for page in api.all_items("coronavirus", dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1)):
+for page in api.all_articles("coronavirus", dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1)):
     do_something(page)
 ```
 
@@ -40,7 +40,8 @@ for page in api.all_items("coronavirus", dt.datetime(2022, 3, 1), dt.datetime(20
 Dev Installation
 ----------------
 
-`pip install -r requirements.txt`
+Install the dependencies for dev: `pip install -e .[dev]`
+
 
 
 Distribution
@@ -60,4 +61,5 @@ Distribution
 Version History
 ---------------
 
+* __v0.1.1__ - more consistent method names
 * __v0.1.0__ - initial test-only release
