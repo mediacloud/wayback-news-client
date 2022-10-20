@@ -18,8 +18,15 @@ class SearchApiClient:
     TERM_AGGREGATION_SIGNIFICANT = "significant"
     TERM_AGGREGATION_RARE = "rare"
 
-    def __init__(self, collection):
+    def __init__(self, collection: str, api_base_url: str = None):
+        """
+        :param collection: the archive support multiple collections of stories so you have to pass in the
+                           name of the collection you want to search against
+        :param api_base_url: advanced optional arg: let you override the hard-coded base URL
+        """
         self._collection = collection
+        if api_base_url:
+            self.API_BASE_URL = api_base_url
         self._session = requests.Session()  # better performance to put all HTTP through this one object
         self._logger = logging.getLogger(__name__)
 
