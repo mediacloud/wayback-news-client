@@ -61,6 +61,7 @@ Distribution
 Version History
 ---------------
 
+* __v0.1.3__ - allow overriding base api URL 
 * __v0.1.2__ - fix `article` endpoint, test case for fetching content (`snippet`) via `article_url` property 
 * __v0.1.1__ - more consistent method names
 * __v0.1.0__ - initial test-only release
