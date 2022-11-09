@@ -96,12 +96,19 @@ class SearchApiClient:
         return results
 
     def all_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime, page_size: int = 1000, **kwargs):
+        """
+        @return: a generator that yeilds lists of articles, grouped by page.
+        @Question: Should it return articles one by one, not by page? 
+        """
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
         params.update(kwargs)
         more_pages = True
         while more_pages:
             page, response = self._query("{}/search/result".format(self._collection), params, method='POST')
-            yield page
+            if self._is_no_results(page):
+                yield []
+            else:
+                yield page
             # check if there is a link to the next page
             more_pages = False
             next_link_token = response.headers.get('x-resume-token')
@@ -127,6 +134,10 @@ class SearchApiClient:
             r = self._session.post(endpoint_url, json=params)
         else:
             raise RuntimeError("Unsupported method of '{}'".format(method))
+        
+        if(r.status_code >= 500):
+            raise RuntimeError("API Server Error: a bad query string could have triggered this. Params: {}".format(params))
+                               
         return r.json(), r
 
     @classmethod
