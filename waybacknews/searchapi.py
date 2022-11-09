@@ -105,7 +105,6 @@ class SearchApiClient:
         more_pages = True
         while more_pages:
             page, response = self._query("{}/search/result".format(self._collection), params, method='POST')
-            print(page)
             if self._is_no_results(page):
                 yield []
             else:
