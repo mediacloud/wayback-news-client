@@ -105,6 +105,7 @@ class SearchApiClient:
         more_pages = True
         while more_pages:
             page, response = self._query("{}/search/result".format(self._collection), params, method='POST')
+            print(page)
             if self._is_no_results(page):
                 yield []
             else:
@@ -134,6 +135,10 @@ class SearchApiClient:
             r = self._session.post(endpoint_url, json=params)
         else:
             raise RuntimeError("Unsupported method of '{}'".format(method))
+        
+        if(r.status_code >= 500):
+            raise RuntimeError("API Server Error: a bad query string could have triggered this. Params: {}".format(params))
+                               
         return r.json(), r
 
     @classmethod

@@ -147,4 +147,10 @@ class TestMediaCloudCollection(TestCase):
                 assert len(article_info['snippet']) > 0
             break
 
-
+    def test_external_server_error(self):
+        err_url = "https://centralasia.media/news:1796533?from=rss".split("/")[-1].split("?")[0]
+        bad_query = f"url:*{err_url}*"
+        start_date = dt.datetime(2022, 8, 1)
+        end_date = dt.datetime(2022, 8, 5)
+        with self.assertRaises(RuntimeError):
+            next(self._api.all_articles(bad_query, start_date, end_date))
