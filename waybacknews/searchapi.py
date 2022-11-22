@@ -64,10 +64,10 @@ class SearchApiClient:
             return 0
         return results['total']
 
-    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> Dict:
+    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List:
         results = self._overview_query(query, start_date, end_date, **kwargs)
         if self._is_no_results(results):
-            return {}
+            return []
         data = results['dailycounts']
         to_return = []
         # transform to list of dicts for easier use
@@ -78,7 +78,7 @@ class SearchApiClient:
                 'timestamp': day.timestamp(),
                 'count': day_value,
             })
-        return {'counts': to_return}
+        return to_return
 
     @staticmethod
     def _date_query_clause(start_date: dt.datetime, end_date: dt.datetime) -> str:

@@ -24,7 +24,7 @@ class TestMediaCloudCollection(TestCase):
     def test_count_over_time(self):
         results = self._api.count_over_time("coronavirus", dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1))
         assert len(results) > 0
-        for item in results['counts']:
+        for item in results:
             assert 'date' in item
             assert 'count' in item
             assert item['count'] > 0
