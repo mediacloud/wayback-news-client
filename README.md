@@ -61,6 +61,7 @@ Distribution
 Version History
 ---------------
 
+* __v1.0.0__ - update to public API endpoint
 * __v0.1.5__ - simpler return for top terms
 * __v0.1.4__ - better error handling
 * __v0.1.3__ - allow overriding base api URL 
