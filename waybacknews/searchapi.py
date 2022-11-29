@@ -9,7 +9,7 @@ VERSION = "v1"  # the API access URL is versioned for future compatability and m
 
 class SearchApiClient:
 
-    API_BASE_URL = "http://colsearch.sawood-dev.us.archive.org:8000/{}/".format(VERSION)
+    API_BASE_URL = "https://wayback-api.archive.org/colsearch/{}/".format(VERSION)
 
     # constants used when requesting top terms
     TERM_FIELD_TITLE = "title"
