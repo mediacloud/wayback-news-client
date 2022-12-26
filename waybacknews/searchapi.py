@@ -136,8 +136,8 @@ class SearchApiClient:
             raise RuntimeError("Unsupported method of '{}'".format(method))
         
         if r.status_code >= 500:
-            raise RuntimeError("API Server Error {}: a bad query string could have triggered this. Params: {}".
-                               format(r.status_code, params))
+            raise RuntimeError("API Server Error {}: a bad query string could have triggered this. Endpoint: {}, Params: {}".
+                               format(r.status_code, endpoint_url, params))
                                
         return r.json(), r
 
