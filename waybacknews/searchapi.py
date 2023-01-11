@@ -3,6 +3,7 @@ from typing import List, Dict
 import requests
 import logging
 import ciso8601
+import waybacknews.util as util
 
 VERSION = "v1"  # the API access URL is versioned for future compatability and maintenance
 
@@ -40,19 +41,19 @@ class SearchApiClient:
         results = self._overview_query(query, start_date, end_date, **kwargs)
         if self._is_no_results(results):
             return []
-        return self._dict_to_list(results['topdomains'])
+        return util.dict_to_list(results['topdomains'])
 
     def top_tlds(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
         results = self._overview_query(query, start_date, end_date, **kwargs)
         if self._is_no_results(results):
             return []
-        return self._dict_to_list(results['toptlds'])
+        return util.dict_to_list(results['toptlds'])
 
     def top_languages(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
         results = self._overview_query(query, start_date, end_date, **kwargs)
         if self._is_no_results(results):
             return []
-        return self._dict_to_list(results['toplangs'])
+        return util.dict_to_list(results['toplangs'])
 
     @staticmethod
     def _is_no_results(results: Dict) -> bool:
@@ -127,6 +128,8 @@ class SearchApiClient:
         """
         Centralize making the actual queries here for easy maintenance and testing of HTTP comms
         """
+        if params and ('q' in params):
+            params['q'] = util.sanitize_query(params['q'])
         endpoint_url = self.API_BASE_URL+endpoint
         if method == 'GET':
             r = self._session.get(endpoint_url, params=params)
@@ -140,11 +143,3 @@ class SearchApiClient:
                                format(r.status_code, endpoint_url, params))
                                
         return r.json(), r
-
-    @classmethod
-    def _dict_to_list(cls, data: Dict) -> List[Dict]:
-        """
-        The API returns dicts, but that isn't very restful nor the current standard apporach to user-friendly JSON.
-        This utility method converts tht into a list of dicts.
-        """
-        return [{'name': k, 'value': v} for k, v in data.items()]

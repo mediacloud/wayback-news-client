@@ -79,11 +79,11 @@ class TestMediaCloudCollection(TestCase):
             assert 'publication_date' in r
 
     def test_article(self):
-        STORY_ID = "8b6ea5cacda7fa0741ada306615b50e4"
+        STORY_ID = "ZDY3YzdlNWE3YTJkMDZiYTcwNjJhNTZiZjY5YzczMTY~'}"
         story = self._api.article(STORY_ID)
         assert len(story['title']) > 0
-        assert story['language'] == 'ca'
-        assert story['domain'] == 'diariandorra.ad'
+        assert story['language'] == 'en'
+        assert story['domain'] == 'dailyvoice.com'
         assert len(story['snippet']) > 0
 
     def test_all_articles(self):
@@ -154,3 +154,23 @@ class TestMediaCloudCollection(TestCase):
         end_date = dt.datetime(2022, 8, 5)
         with self.assertRaises(RuntimeError):
             next(self._api.all_articles(bad_query, start_date, end_date))
+
+    def test_reserved_characters(self):
+        story_count = self._api.count("url:*.cnn.com/2022*", dt.datetime(2022, 12, 1),  dt.datetime(2022, 12, 2))
+        assert story_count > 0
+
+    def test_domain_and_url_search(self):
+        start_date = dt.datetime(2022, 1, 1)
+        end_date = dt.datetime(2022, 12, 1)
+        # does searching against URL with a domain work?
+        all_dv = self._api.count("url:*dailyvoice.com*", start_date, end_date)
+        assert all_dv > 0
+        # does searching against a domain and URL path work?
+        mountpleasant_dv = self._api.count("domain:dailyvoice.com AND url:*mountpleasant*", start_date, end_date)
+        assert all_dv > mountpleasant_dv
+        assert mountpleasant_dv > 0
+        # does searching by partial URL path work?
+        sample_mountplesant = self._api.sample("domain:dailyvoice.com AND url:*mountpleasant*", start_date, end_date)
+        assert "dailyvoice.com/new-york/mountpleasant" in sample_mountplesant[0]['url']
+        mountpleasant_path_dv = self._api.count("url:*dailyvoice.com/new-york/mountpleasant*", start_date, end_date)
+        assert mountpleasant_path_dv > 0
