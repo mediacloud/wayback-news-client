@@ -127,6 +127,8 @@ class SearchApiClient:
         """
         Centralize making the actual queries here for easy maintenance and testing of HTTP comms
         """
+        if params and ('q' in params) and len(params['q']) > pow(2, 15):
+            raise RuntimeError("Query too big for ElasticSearch - {} > 2^15".format(len(params['q'])))
         endpoint_url = self.API_BASE_URL+endpoint
         if method == 'GET':
             r = self._session.get(endpoint_url, params=params)

@@ -23,16 +23,22 @@ class TestMediaCloudCollection(TestCase):
 
     def test_count_over_time(self):
         results = self._api.count_over_time("coronavirus", dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1))
-        assert len(results) > 0
+        assert len(results) == 32
         for item in results:
             assert 'date' in item
             assert 'count' in item
             assert item['count'] > 0
 
+    def test_low_level(self):
+        q = "\"time\" AND publication_date:[2023-05-15 TO 2023-05-22] AND domain:(3blmedia.com OR 972mag.com OR abc.net.au)"
+        params = dict(q=q)
+        results, response = self._api._query("{}/search/overview".format(self._api._collection), params, method='POST')
+        assert response.status_code == 200
+
     def test_domain_clause(self):
         domain = "cnn.com"
         results = self._api.sample("coronavirus and domain:({})".format(domain),
-                                        dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1))
+                                   dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1))
         assert len(results) > 0
         for s in results:
             assert s['domain'] == domain
@@ -79,7 +85,7 @@ class TestMediaCloudCollection(TestCase):
             assert 'publication_date' in r
 
     def test_article(self):
-        STORY_ID = "8b6ea5cacda7fa0741ada306615b50e4"
+        STORY_ID = "OGI2ZWE1Y2FjZGE3ZmEwNzQxYWRhMzA2NjE1YjUwZTQ~"
         story = self._api.article(STORY_ID)
         assert len(story['title']) > 0
         assert story['language'] == 'ca'
