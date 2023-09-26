@@ -11,6 +11,7 @@ VERSION = "v1"  # the API access URL is versioned for future compatability and m
 class SearchApiClient:
 
     API_BASE_URL = "https://wayback-api.archive.org/colsearch/{}/".format(VERSION)
+    TIMEOUT_SECS = 30
 
     # constants used when requesting top terms
     TERM_FIELD_TITLE = "title"
@@ -134,9 +135,9 @@ class SearchApiClient:
             params['q'] = util.sanitize_query(params['q'])
         endpoint_url = self.API_BASE_URL+endpoint
         if method == 'GET':
-            r = self._session.get(endpoint_url, params=params)
+            r = self._session.get(endpoint_url, params=params, timeout=self.TIMEOUT_SECS)
         elif method == 'POST':
-            r = self._session.post(endpoint_url, json=params)
+            r = self._session.post(endpoint_url, json=params, timeout=self.TIMEOUT_SECS)
         else:
             raise RuntimeError("Unsupported method of '{}'".format(method))
         
