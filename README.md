@@ -61,7 +61,7 @@ Distribution
 Version History
 ---------------
 
-* __v1.0.3__ - remove extra params mcproviders library might be adding
+* __v1.0.3__ - add 30 sec timeout, remove extra params mcproviders library might be adding
 * __v1.0.2__ - fix to article endpoint
 * __v1.0.1__ - automatically escape '/' in query strings, test case for `url` field search
 * __v1.0.0__ - update to public API endpoint
