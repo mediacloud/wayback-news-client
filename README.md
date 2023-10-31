@@ -1,9 +1,9 @@
-Wayback Machine News Archive Search
+Wayback Machine News Archive Client
 ===================================
 
 🚧 _under construction_ 🚧
 
-A simple library to access the Wayback Machine news archive search.
+A simple client library to access the Wayback Machine news archive search.
 
 
 Installation
