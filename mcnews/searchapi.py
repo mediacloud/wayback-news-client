@@ -8,9 +8,10 @@ import waybacknews.util as util
 VERSION = "v1"  # the API access URL is versioned for future compatability and maintenance
 
 
+
 class SearchApiClient:
 
-    API_BASE_URL = "https://wayback-api.archive.org/colsearch/{}/".format(VERSION)
+    API_BASE_URL = "https://news-search-api.tarbell.mediacloud.org/{}/".format(VERSION)
     TIMEOUT_SECS = 30
 
     # constants used when requesting top terms

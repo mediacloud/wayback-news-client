@@ -1,4 +1,4 @@
-Wayback Machine News Archive Client
+Mediacloud News Archive Client
 ===================================
 
 🚧 _under construction_ 🚧
