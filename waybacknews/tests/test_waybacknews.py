@@ -79,8 +79,8 @@ class TestMediaCloudCollection(TestCase):
             assert 'publication_date' in r
 
     def test_article(self):
-        STORY_ID = "ZDY3YzdlNWE3YTJkMDZiYTcwNjJhNTZiZjY5YzczMTY~'}"
-        story = self._api.article(STORY_ID)
+        story_id = "ZDY3YzdlNWE3YTJkMDZiYTcwNjJhNTZiZjY5YzczMTY~'}"
+        story = self._api.article(story_id)
         assert len(story['title']) > 0
         assert story['language'] == 'en'
         assert story['domain'] == 'dailyvoice.com'
@@ -152,7 +152,7 @@ class TestMediaCloudCollection(TestCase):
                                   field=SearchApiClient.TERM_FIELD_SNIPPET,
                                   aggregation=SearchApiClient.TERM_AGGREGATION_TOP)
         last_count = 99999999999
-        for term, count in results.items():
+        for _, count in results.items():
             assert last_count >= count
             last_count = count
 
@@ -163,7 +163,7 @@ class TestMediaCloudCollection(TestCase):
         end_date = dt.datetime(2022, 3, 4)
         for page in self._api.all_articles(query, start_date, end_date):
             for article in page[:5]:
-                article_info = requests.get(article['article_url']).json()
+                article_info = requests.get(article['article_url'], timeout=30).json()
                 assert 'snippet' in article_info
                 assert len(article_info['snippet']) > 0
             break
