@@ -1,7 +1,7 @@
 #! /usr/bin/env python
-from setuptools import setup
 import re
 import os
+from setuptools import setup
 
 REQUIRED_PACKAGES = [
     # utilities
@@ -9,12 +9,12 @@ REQUIRED_PACKAGES = [
     "ciso8601==2.2.*"  # super-fast date parsing
 ]
 
-with open('waybacknews/__init__.py', 'r') as fd:
+with open('waybacknews/__init__.py', 'r', encoding='utf8') as fd:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 # add README.md to distribution
 this_directory = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(this_directory, 'README.md')) as f:
+with open(os.path.join(this_directory, 'README.md'), 'r', encoding='utf8') as f:
     long_description = f.read()
 
 setup(name='wayback-news-search',
