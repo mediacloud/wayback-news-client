@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import List, Dict
+from typing import List, Dict, Optional
 import requests
 import logging
 import ciso8601
@@ -100,7 +100,6 @@ class SearchApiClient:
     def all_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime, page_size: int = 1000, **kwargs):
         """
         @return: a generator that yeilds lists of articles, grouped by page.
-        @Question: Should it return articles one by one, not by page? 
         """
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
         params.update(kwargs)
@@ -117,6 +116,22 @@ class SearchApiClient:
             if next_link_token:
                 params['resume'] = next_link_token
                 more_pages = True
+
+    def paged_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime,
+                       page_size: Optional[int] = 1000,  pagination_token: Optional[str] = None, **kwargs):
+        """
+        @return: one page of stories
+        """
+        params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
+        if pagination_token:
+            params['resume'] = pagination_token
+        params.update(kwargs)
+        more_pages = True
+        page, response = self._query("{}/search/result".format(self._collection), params, method='POST')
+        if self._is_no_results(page):
+            return []
+        else:
+            return page, response.headers.get('x-resume-token')
 
     def terms(self, query: str, start_date: dt.datetime, end_date: dt.datetime, field: str, aggregation: str, **kwargs) -> Dict:
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
