@@ -142,7 +142,7 @@ class SearchApiClient:
         """
         Centralize making the actual queries here for easy maintenance and testing of HTTP comms
         """
-        if 'domains' in params:  # remove domains param that might be dangling
+        if params and ('domains' in params):  # remove domains param that might be dangling
             del params['domains']
         if params and ('q' in params):
             params['q'] = util.sanitize_query(params['q'])
