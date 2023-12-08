@@ -118,11 +118,14 @@ class SearchApiClient:
                 more_pages = True
 
     def paged_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime,
-                       page_size: Optional[int] = 1000,  pagination_token: Optional[str] = None, **kwargs):
+                       page_size: Optional[int] = 1000,  expanded: bool = False,
+                       pagination_token: Optional[str] = None, **kwargs):
         """
         @return: one page of stories
         """
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
+        if expanded:
+            params['expanded'] = 1
         if pagination_token:
             params['resume'] = pagination_token
         params.update(kwargs)
