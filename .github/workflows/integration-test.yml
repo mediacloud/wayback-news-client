@@ -10,10 +10,10 @@ jobs:
       matrix:
         python-version: ["3.10"]
 
-    name: Unit tests in Docker
+    name: Integration test with dummy ES data
     steps:
 
-      - uses: actions/checkout@v4
+      # setup ES index
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
@@ -28,14 +28,44 @@ jobs:
       - name: Elasticsearch is reachable
         run: |
           curl --verbose --show-error http://localhost:9200
-
-      - name: Run news-search-api latest from main
+      - name: news-search-api Checkout
         run: |
           docker run -p 8000:8000 mcsystems/news-search-api:main
 
+      # setup news-search-api server and dummy data
+      - name: Checkout news-search-api server
+        uses: actions/checkout@v4
+        with:
+          repository: mediacloud/news-search-api
+          path: news-search-api
+      - name: Install news-search-api server python dependencies
+        with:
+          path: news-search-api
+        run: |
+          pip install -e .[dev]
+      - name: Install fixtures
+        with:
+          path: news-search-api
+        run: |
+          python -m test.create_fixtures
+      - name: Run news-search-api server
+        with:
+          path: news-search-api
+        run: |
+          python api.py
+
+      # set up this code and run test
+      - name: Main checkout
+        uses: actions/checkout@v4
+        with:
+          path: main
       - name: Install python dependencies
+        with:
+          path: main
         run: |
           pip install -e .[dev]
       - name: Run integration test
+        with:
+          path: main
         run: |
           pytest waybacknews/tests/test_fixtures.py

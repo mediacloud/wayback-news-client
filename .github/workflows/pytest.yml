@@ -1,6 +1,6 @@
-name: Integration test against wayback-machine archive
+name: do-testing
 
-on: 
+on:
   push:
     branches: ["main"]
   pull_request:
@@ -10,24 +10,24 @@ permissions:
   contents: read
 
 jobs:
-  
-  wm-integration-test:
+
+  build:
     runs-on: ubuntu-latest
-    strategy: 
+    strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
-      - uses: actions/checkout@v4
-      
+      - uses: actions/checkout@v3
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       - name: Install Deps
         run: |
-          pip install -e .[dev] 
+          pip install -e .[dev]
       - name: Run Pytest
         run: |
-          pytest waybacknews/tests/test_waybacknews.py
+          pytest
