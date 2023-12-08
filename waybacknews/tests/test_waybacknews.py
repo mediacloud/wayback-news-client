@@ -122,6 +122,19 @@ class TestMediaCloudCollection(TestCase):
         page2_urls = [s['url'] for s in page2]
         assert page1_url1 not in page2_urls  # verify pages don't overlap
 
+    def test_paged_expanded_articles(self):
+        query = "biden"
+        start_date = dt.datetime(2023, 11, 25)
+        end_date = dt.datetime(2023, 11, 26)
+        page1, next_token1 = self._api.paged_articles(query, start_date, end_date)
+        for s in page1:
+            assert 'text_content' not in s
+        page2, next_token2 = self._api.paged_articles(query, start_date, end_date,
+                                                      pagination_token=next_token1, expanded=True)
+        for s in page2:
+            assert 'text_content' in s
+
+
     def test_top_sources(self):
         results = self._api.top_sources("coronavirus", dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1))
         assert len(results) > 0
