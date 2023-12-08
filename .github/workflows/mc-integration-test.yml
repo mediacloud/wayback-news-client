@@ -1,0 +1,71 @@
+name: Integration test against news-search-api:main
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  fixture-integration-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    name: Integration test with dummy ES data
+    steps:
+
+      # setup ES index
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Run Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 8.8.2
+          security-enabled: false
+      - name: Verify Elasticsearch is reachable
+        run: |
+          curl --verbose --show-error http://localhost:9200
+
+      # setup news-search-api server and dummy data
+      - name: Checkout news-search-api server
+        uses: actions/checkout@v4
+        with:
+          repository: mediacloud/news-search-api
+          path: news-search-api
+      - name: Install news-search-api server python dependencies
+        working-directory: news-search-api
+        run: |
+          pip install -r requirements.txt
+      - name: Install fixtures
+        working-directory: news-search-api
+        run: |
+          python -m test.create_fixtures
+      - name: Run news-search-api server
+        working-directory: news-search-api
+        run: |
+          python api.py &
+          sleep 5
+      - name: Verify news-search-api server is reachable
+        working-directory: news-search-api
+        run: |
+          curl --verbose --show-error http://localhost:8000
+
+      # set up api client code and run test
+      - name: Main checkout
+        uses: actions/checkout@v4
+        with:
+          path: main
+      - name: Install python dependencies
+        working-directory: main
+        run: |
+          pip install -e .[dev]
+      - name: Run integration test
+        working-directory: main
+        run: |
+          pytest waybacknews/tests/test_fixtures.py
