@@ -28,9 +28,6 @@ jobs:
       - name: Elasticsearch is reachable
         run: |
           curl --verbose --show-error http://localhost:9200
-      - name: news-search-api Checkout
-        run: |
-          docker run -p 8000:8000 mcsystems/news-search-api:main
 
       # setup news-search-api server and dummy data
       - name: Checkout news-search-api server
