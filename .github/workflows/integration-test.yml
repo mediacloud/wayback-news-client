@@ -25,7 +25,7 @@ jobs:
         with:
           stack-version: 8.8.2
           security-enabled: false
-      - name: Elasticsearch is reachable
+      - name: Verify Elasticsearch is reachable
         run: |
           curl --verbose --show-error http://localhost:9200
 
@@ -46,9 +46,14 @@ jobs:
       - name: Run news-search-api server
         working-directory: news-search-api
         run: |
-          python api.py
+          python api.py &
+          sleep 5
+      - name: Verify news-search-api server is reachable
+        working-directory: news-search-api
+        run: |
+          curl --verbose --show-error http://localhost:8000
 
-      # set up this code and run test
+      # set up api client code and run test
       - name: Main checkout
         uses: actions/checkout@v4
         with:
