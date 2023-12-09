@@ -61,6 +61,7 @@ Distribution
 Version History
 ---------------
 
+* __v1.2.1__ - fix paging bug triggered by no results
 * __v1.2.0__ - add support for new `expanded` results, and more integration testing
 * __v1.1.0__ - add new `paged_articles` method to allow paging over all results
 * __v1.0.3__ - add 30 sec timeout, remove extra params mcproviders library might be adding
