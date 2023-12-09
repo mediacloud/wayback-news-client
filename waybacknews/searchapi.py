@@ -119,7 +119,7 @@ class SearchApiClient:
 
     def paged_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime,
                        page_size: Optional[int] = 1000,  expanded: bool = False,
-                       pagination_token: Optional[str] = None, **kwargs):
+                       pagination_token: Optional[str] = None, **kwargs) -> tuple[List[Dict], Optional[str]]:
         """
         @return: one page of stories
         """
@@ -131,7 +131,7 @@ class SearchApiClient:
         params.update(kwargs)
         page, response = self._query("{}/search/result".format(self._collection), params, method='POST')
         if self._is_no_results(page):
-            return []
+            return [], None
         return page, response.headers.get('x-resume-token')
 
     def terms(self, query: str, start_date: dt.datetime, end_date: dt.datetime, field: str, aggregation: str,
