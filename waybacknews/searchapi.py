@@ -97,7 +97,9 @@ class SearchApiClient:
         results, _ = self._query("{}/article/{}".format(self._collection, article_id), method='GET')
         return results
 
-    def all_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime, page_size: int = 1000, **kwargs):
+    def all_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime, page_size: Optional[int],
+                     expanded: Optional[bool], sort_field: Optional[str] = None, sort_order: Optional[str] = None,
+                     **kwargs):
         """
         @return: a generator that yeilds lists of articles, grouped by page.
         """
@@ -106,24 +108,29 @@ class SearchApiClient:
         more_pages = True
         next_page_token = None
         while more_pages:
-            page, next_page_token = self.paged_articles(query, start_date, end_date, page_size, **kwargs,
-                                                        pagination_token=next_page_token)
-            if self._is_no_results(page):
-                yield []
-            else:
-                yield page
+            page, next_page_token = self.paged_articles(query, start_date, end_date, page_size, expanded,
+                                                        sort_field, sort_order, next_page_token,
+                                                        **kwargs)
+            yield page
             # check if there is a link to the next page
             more_pages = False
             if next_page_token:
                 more_pages = True
 
     def paged_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime,
-                       page_size: Optional[int] = 1000,  expanded: bool = False,
+                       page_size: Optional[int] = None,  expanded: bool = False,
+                       sort_field: Optional[str] = None, sort_order: Optional[str] = None,
                        pagination_token: Optional[str] = None, **kwargs) -> tuple[List[Dict], Optional[str]]:
         """
         @return: one page of stories
         """
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
+        if sort_field:
+            params['sort_field'] = sort_field
+        if sort_order:
+            params['sort_order'] = sort_order
+        if page_size:
+            params['page_size'] = page_size
         if expanded:
             params['expanded'] = 1
         if pagination_token:
