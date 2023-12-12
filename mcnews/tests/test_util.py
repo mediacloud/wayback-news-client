@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-import waybacknews.util as util
+import mcnews.util as util
 
 
 class TestUtil(TestCase):
@@ -11,7 +11,7 @@ class TestUtil(TestCase):
         assert sanitized == "url:*dailyvoice.com\/new-york\/mountpleasant*"
 
     def test_dict_to_list(self):
-        api_like_data = dict(key1='value1', key2='value2')
+        api_like_data = { 'key1': 'value1', 'key2':'value2' }
         list_version = util.dict_to_list(api_like_data)
         assert len(list_version) == 2
         assert list_version[0]['name'] == 'key1'
