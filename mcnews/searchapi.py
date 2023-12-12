@@ -3,7 +3,7 @@ from typing import List, Dict, Optional
 import logging
 import requests
 import ciso8601
-from waybacknews import util
+from mcnews import util
 
 VERSION = "v1"  # the API access URL is versioned for future compatability and maintenance
 

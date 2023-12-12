@@ -9,6 +9,7 @@ A simple client library to access the Wayback Machine news archive search.
 Installation
 ------------
 
+NB: TBD
 `pip install wayback-news-search`
 
 
@@ -18,7 +19,7 @@ Basic Usage
 Counting matching stories:
 
 ```python
-from waybacknews.searchapi import SearchApiClient
+from mcnews.searchapi import SearchApiClient
 import datetime as dt
 
 api = SearchApiClient("mediacloud")
@@ -28,7 +29,7 @@ api.count("coronavirus", dt.datetime(2022, 3, 1), dt.datetime(2022, 4, 1))
 Paging over all matching results:
 
 ```python
-from waybacknews.searchapi import SearchApiClient
+from mcnews.searchapi import SearchApiClient
 import datetime as dt
 
 api = SearchApiClient("mediacloud")
@@ -48,7 +49,7 @@ Distribution
 ------------
 
 1. Run `pytest` to make sure all the test pass
-2. Update the version number in `waybacknews/__init__.py`
+2. Update the version number in `mcnews/__init__.py`
 3. Make a brief note in the version history section below about the changes
 4. Commit the changes
 5. Tag the commit with a semantic version number - 'v*.*.*'

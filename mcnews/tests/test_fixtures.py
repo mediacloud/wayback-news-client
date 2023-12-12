@@ -1,7 +1,7 @@
 from unittest import TestCase
 import datetime as dt
 
-import waybacknews.searchapi as searchapi
+import mcnews.searchapi as searchapi
 
 INTEGRATION_TEST_COLLECTION = "mediacloud_test"
 INTEGRATION_TEST_HOST = "http://127.0.0.1:8000"

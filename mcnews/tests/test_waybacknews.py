@@ -3,7 +3,7 @@ import datetime as dt
 import ciso8601
 import requests
 
-from waybacknews.searchapi import SearchApiClient
+from mcnews.searchapi import SearchApiClient
 
 COLLECTION_MEDIACLOUD = "mediacloud"
 

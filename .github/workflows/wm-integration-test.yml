@@ -27,4 +27,4 @@ jobs:
           pip install -e .[dev]
       - name: Run Pytest
         run: |
-          pytest waybacknews/tests/test_waybacknews.py
+          pytest mcnews/tests/test_waybacknews.py

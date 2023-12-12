@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-import waybacknews.util as util
+import mcnews.util as util
 
 
 class TestUtil(TestCase):
