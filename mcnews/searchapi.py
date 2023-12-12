@@ -1,9 +1,9 @@
 import datetime as dt
-from typing import List, Dict
-import requests
+from typing import List, Dict, Optional
 import logging
+import requests
 import ciso8601
-import waybacknews.util as util
+from waybacknews import util
 
 VERSION = "v1"  # the API access URL is versioned for future compatability and maintenance
 
@@ -90,7 +90,7 @@ class SearchApiClient:
     def _overview_query(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> Dict:
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
         params.update(kwargs)
-        results, response = self._query("{}/search/overview".format(self._collection), params, method='POST')
+        results, _ = self._query("{}/search/overview".format(self._collection), params, method='POST')
         return results
 
     def article(self, article_id: str) -> Dict:
@@ -101,36 +101,52 @@ class SearchApiClient:
     def all_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime, page_size: int = 1000, **kwargs):
         """
         @return: a generator that yeilds lists of articles, grouped by page.
-        @Question: Should it return articles one by one, not by page? 
         """
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
         params.update(kwargs)
         more_pages = True
+        next_page_token = None
         while more_pages:
-            page, response = self._query("{}/search/result".format(self._collection), params, method='POST')
+            page, next_page_token = self.paged_articles(query, start_date, end_date, page_size, **kwargs,
+                                                        pagination_token=next_page_token)
             if self._is_no_results(page):
                 yield []
             else:
                 yield page
             # check if there is a link to the next page
             more_pages = False
-            next_link_token = response.headers.get('x-resume-token')
-            if next_link_token:
-                params['resume'] = next_link_token
+            if next_page_token:
                 more_pages = True
 
-    def terms(self, query: str, start_date: dt.datetime, end_date: dt.datetime, field: str, aggregation: str, **kwargs) -> Dict:
+    def paged_articles(self, query: str, start_date: dt.datetime, end_date: dt.datetime,
+                       page_size: Optional[int] = 1000,  expanded: bool = False,
+                       pagination_token: Optional[str] = None, **kwargs) -> tuple[List[Dict], Optional[str]]:
+        """
+        @return: one page of stories
+        """
+        params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
+        if expanded:
+            params['expanded'] = 1
+        if pagination_token:
+            params['resume'] = pagination_token
+        params.update(kwargs)
+        page, response = self._query("{}/search/result".format(self._collection), params, method='POST')
+        if self._is_no_results(page):
+            return [], None
+        return page, response.headers.get('x-resume-token')
+
+    def terms(self, query: str, start_date: dt.datetime, end_date: dt.datetime, field: str, aggregation: str,
+              **kwargs) -> Dict:
         params = {"q": "{} AND {}".format(query, self._date_query_clause(start_date, end_date))}
         params.update(kwargs)
-        results, response = self._query("{}/terms/{}/{}".format(self._collection, field, aggregation), params,
-                                        method='GET')
+        results, _ = self._query("{}/terms/{}/{}".format(self._collection, field, aggregation), params, method='GET')
         return results
 
     def _query(self, endpoint: str, params: Dict = None, method: str = 'GET'):
         """
         Centralize making the actual queries here for easy maintenance and testing of HTTP comms
         """
-        if 'domains' in params:  # remove domains param that might be dangling
+        if params and ('domains' in params):  # remove domains param that might be dangling
             del params['domains']
         if params and ('q' in params):
             params['q'] = util.sanitize_query(params['q'])
@@ -141,9 +157,9 @@ class SearchApiClient:
             r = self._session.post(endpoint_url, json=params, timeout=self.TIMEOUT_SECS)
         else:
             raise RuntimeError("Unsupported method of '{}'".format(method))
-        
+
         if r.status_code >= 500:
-            raise RuntimeError("API Server Error {}: a bad query string could have triggered this. Endpoint: {}, Params: {}".
-                               format(r.status_code, endpoint_url, params))
-                               
+            raise RuntimeError("API Server Error {}: a bad query string could have triggered this. Endpoint: {},"
+                               " Params: {}".format(r.status_code, endpoint_url, params))
+
         return r.json(), r
