@@ -42,6 +42,10 @@ jobs:
         working-directory: news-search-api
         run: |
           pip install -r requirements.txt
+      - name: Install news-search-api server dev dependencies
+        working-directory: news-search-api
+        run: |
+          pip install -r requirements-dev.txt
       - name: Install fixtures
         working-directory: news-search-api
         run: |
