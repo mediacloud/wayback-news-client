@@ -2,12 +2,16 @@ from unittest import TestCase
 import datetime as dt
 import ciso8601
 import requests
+import os
+import pytest
 
 from mcnews.searchapi import SearchApiClient
 
 COLLECTION_MEDIACLOUD = "mediacloud"
 
+IN_GITHUB_CI_WORKFLOW = os.getenv("GITHUB_ACTIONS") == "true"
 
+pytest.mark.skipif(IN_GITHUB_CI_WORKFLOW, reason="requires VPN tunnel to Media Cloud")
 class TestMediaCloudCollection(TestCase):
 
     def setUp(self) -> None:
