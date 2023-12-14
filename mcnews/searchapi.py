@@ -4,11 +4,15 @@ import logging
 import requests
 import ciso8601
 from mcnews import util
+import os
+import pytest
 
 VERSION = "v1"  # the API access URL is versioned for future compatability and maintenance
 
 
+IN_GITHUB_CI_WORKFLOW = os.getenv("GITHUB_ACTIONS") == "true"
 
+pytest.mark.skipif(IN_GITHUB_CI_WORKFLOW, reason="requires VPN tunnel to Media Cloud")
 class SearchApiClient:
 
     API_BASE_URL = "https://news-search-api.tarbell.mediacloud.org/{}/".format(VERSION)
